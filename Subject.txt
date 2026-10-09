@@ -31,7 +31,7 @@ change their password if they forgot it.
 On the application, user must access at least 2 functions out of the following 3 ones:
 - Music Track Vote
 - Music Playlist Editor
-- Music Control Delegation.
+- Music Control Delegation. 
 
 2.1 Music Track Vote
 # Live music chain with vote.
