@@ -1,0 +1,15 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# Node / Expo (see also frontend/.gitignore)
+node_modules/
+
+# Editors
+.vscode/
+.idea/
