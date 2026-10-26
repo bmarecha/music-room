@@ -15,7 +15,6 @@ import { login } from '../api/auth';
 type Props = {
   onLoggedIn?: (accessToken: string) => void;
   onGoogleLogin?: () => void;
-  onFacebookLogin?: () => void;
   onForgotPassword?: () => void;
   onGoToRegister?: () => void;
 };
@@ -23,7 +22,6 @@ type Props = {
 export default function LoginScreen({
   onLoggedIn,
   onGoogleLogin,
-  onFacebookLogin,
   onForgotPassword,
   onGoToRegister,
 }: Props) {
@@ -108,9 +106,6 @@ export default function LoginScreen({
         <Pressable style={[styles.button, styles.social]} onPress={onGoogleLogin}>
           <Text style={styles.socialText}>Continuer avec Google</Text>
         </Pressable>
-        <Pressable style={[styles.button, styles.facebook]} onPress={onFacebookLogin}>
-          <Text style={styles.facebookText}>Continuer avec Facebook</Text>
-        </Pressable>
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Pas encore de compte ? </Text>
@@ -171,8 +166,6 @@ const styles = StyleSheet.create({
   separatorText: { color: '#888' },
   social: { borderWidth: 1, borderColor: '#ffffff' },
   socialText: { fontSize: 16, fontWeight: '500' },
-  facebook: { backgroundColor: '#1877F2' },
-  facebookText: { color: '#fff', fontSize: 16, fontWeight: '500' },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
