@@ -27,11 +27,7 @@ In their profile, the user must be able to state and update:
 application must demand a mail validation and invites the user to
 change their password if they forgot it.
 
-2 Services
-On the application, user must access at least 2 functions out of the following 3 ones:
-- Music Track Vote
-- Music Playlist Editor
-- Music Control Delegation. 
+## Deleted the option we don't need
 
 2.1 Music Track Vote
 # Live music chain with vote.
@@ -51,12 +47,6 @@ A license management must be integrated to the service:
 ! You should especially care about the management of competition
 problematics: for instance, if several people vote for different
 tracks or the same one in a playlist.
-
-2.2 Music Control Delegation
-# Music control delegation.
-A license management must be integrated to the service. It must be specific for each
-device attached to the user’s account. The user can choose to give the music control to
-different friends.
 
 2.3 Music Playlist Editor
 # Real time multi-user playlist
@@ -138,10 +128,7 @@ size.
 According to your technological choices, web support can require that you rewrite
 your client code entirely or almost entirely.
 
-2 Reflection on the IoT
-You can implement a mechanism such as IBeacon on your event. For instance, when
-people get near a public event registered on your service, they automatically receive
-informations about the event, how to access it, the kind of music etc.
+## 2. Deleted bonus 2
 
 3 Free subscription vs. Paid subscription
 Nowadays, web solutions and mobile applications often offer the user to choose between

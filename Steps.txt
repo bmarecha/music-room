@@ -1,0 +1,60 @@
+Phase 1: Foundations & Infrastructure - done by Gaetan
+
+Phase 2: Authentication & User Management - Dep Phase 1 - to do by Baptiste
+Establishes the security layer and user context required for all subsequent features.
+• Task 2.1: Database Migrations for Users & Roles
+	• Description: Set up Alembic (or similar) to manage database migrations for User accounts, Privacy scopes (Public, Friends-only, Private), and License/Subscription statuses.
+• Task 2.2: Backend Auth API (JWT & OAuth)
+	• Description: Implement endpoints for Email/Password registration, Email Validation mock/service, Password Reset, and Google/Facebook OAuth integration using JWT tokens for session security.
+• Task 2.3: Frontend Auth UI & Integration
+	• Description: Build login/signup screens in Expo, wire up social auth SDKs (Google/Facebook), handle JWT token storage securely, and set up protected route navigation.
+• Task 2.4: Backend Profile & Privacy Management API
+	• Description: Create endpoints to fetch/update profile data, music preferences, and enforce data privacy boundaries (Public, Friends-Only, Private) to protect unauthorized data access.
+• Task 2.5: Frontend Profile UI
+	• Description: Build the Profile view in Expo with sections for public, friend-locked, and private information, plus music preferences.
+
+
+Phase 3: Core Logic – Playlists, Voting & Concurrency - Dep 2.1 - TODO Gaetan
+
+The meat of the project. This phase addresses the business logic and crucial concurrency challenges.
+• Task 3/1: Backend Playlist & Event Engine
+	• Description: "Conception des tables Événements/Tracks en utilisant les ID du fournisseur tiers (ex: spotify_track_id: string)."
+• Task 3/2: Concurrency Handling for Live Track Voting (Section 2.1)
+	• Description: Implement a lock mechanism, atomic database transactions, or a queue system in FastAPI to safely handle multiple users voting on the same or different tracks simultaneously without corrupting the order.
+• Task 3/3: Real-Time Multi-User Playlist Concurrency (Section 2.3)
+	• Description: Implement WebSockets in FastAPI to support multi-user real-time track reordering, handling collision conflicts when multiple users move tracks at the same time.
+• Task 3/4: License & Visibility Verification Middleware (Section 2.1+2.3)
+	• Description: Write backend middleware/guards to enforce access rules: checking event privacy, license-restricted voters, and location/time-based voting constraints.
+	• Dependencies: Task 2.4
+• Task 3.5: Frontend Music Track Vote UI
+	• Description: Build the Expo interface to list events, view the live public/private playlist, and cast upvotes/downvotes.
+	• Dependencies: Task 2.3, 3.4
+• Task 3.6: Frontend Real-Time Playlist Editor UI
+	• Description: Build the Expo interface for the real-time playlist, integrating WebSocket listeners to display live re-ordering and tracking edits.
+	• Dependencies: Task 2.3, 3.4
+
+Phase 4: Security, Logging & Telemetry - Dep 2.2
+
+Hardening the application and ensuring system tracking requirements are met.
+• Task 4.1: Device-Aware Logging Engine
+	• Description: Create a global interceptor/middleware in FastAPI that forces all incoming actions to parse and log the client platform, device model, and app version.
+• Task 4.2: Frontend Telemetry Payloads
+	• Description: Configure Expo's Device and Application modules to automatically attach platform details (e.g., iOS, iPhone 15, v1.0.0) to every API request header.
+• Task 4.3: API Rate-Limiting & Security Auditing
+	• Description: Implement rate-limiting (e.g., slowapi) on critical endpoints to prevent brute-force attacks and establish strict CORS policies.
+
+Phase 5: Load Testing & Optimization - Dep Phase 2 and Phase 3
+
+Verifying how much weight your system can hold before final deployment.
+• Task 5.1: Performance Benchmarking Setup
+	• Description: Write load-test scripts using a tool like Locust, JMeter, or Artillery to simulate simultaneous user registrations, rapid track voting, and websocket connections.
+• Task 5.2: Backend Optimization & Server Scaling
+	• Description: Profile your FastAPI apps and Postgres queries based on benchmark results. Optimize DB indexes, connection pools, and container CPU/RAM resource limits.
+
+Phase 6: Bonus Features - Dep Phase 2 and Phase 3
+
+To be undertaken only after the core mandatory requirements are stable.
+• Task 6.1: Free vs. Paid Subscription Model (Bonus 3)
+	• Description: Extend the user database schema for tier flags. Enforce FastAPI backend blockers that restrict the "Real-Time Playlist Editor" to paid users, and add a toggle UI in Expo to mock switching subscriptions.
+• Task 6.2: Offline Cache & Synchronization Framework (Bonus 4)
+	• Description: Implement local SQLite/AsyncStorage caching on Expo to allow offline tracking. Design a synchronization protocol on the FastAPI backend to handle merge conflicts when the device reconnects.
