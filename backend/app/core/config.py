@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     postgres_port: int = 5432
 
     secret_key: str = "change-me"
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 60 * 24 * 7
+    email_token_expire_hours: int = 24
+    reset_token_expire_minutes: int = 60
+    google_client_id: str = ""
     cors_origins: list[str] = ["*"]
 
     @property
