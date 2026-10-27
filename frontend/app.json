@@ -2,6 +2,11 @@
   "expo": {
     "name": "Music Room",
     "slug": "music-room",
+    "scheme": "musicroom",
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

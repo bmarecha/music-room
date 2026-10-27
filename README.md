@@ -34,6 +34,7 @@ make up     # starts db, backend and frontend
 ```
 
 - API docs (Swagger): http://localhost:8000/api/v1/docs
+- Frontend : http://localhost:8081/
 - Expo: scan the QR code shown by `make logs` with Expo Go
 
 Run `make help` to see every command.
