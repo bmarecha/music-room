@@ -15,6 +15,35 @@ export type User = {
   created_at: string;
 };
 
+export type VisibilityLevel = 'public' | 'friends' | 'private';
+export type PreferenceType = 'genre' | 'artist';
+
+export type MusicPreference = {
+  preference_type: PreferenceType;
+  preference_value: string;
+};
+
+export type Profile = {
+  id: number;
+  public_name: string;
+  bio: string | null;
+  birthdate: string | null;
+  bio_visibility: VisibilityLevel;
+  birthdate_visibility: VisibilityLevel;
+  music_preferences_visibility: VisibilityLevel;
+  music_preferences: MusicPreference[];
+};
+
+export type ProfileUpdate = {
+  public_name?: string | null;
+  bio?: string | null;
+  birthdate?: string | null;
+  bio_visibility?: VisibilityLevel;
+  birthdate_visibility?: VisibilityLevel;
+  music_preferences_visibility?: VisibilityLevel;
+  music_preferences?: MusicPreference[];
+};
+
 export type TokenResponse = {
   access_token: string;
   token_type: string;
@@ -91,4 +120,15 @@ export function linkGoogleAccount(id_token: string): Promise<User> {
 
 export function getMe(): Promise<User> {
   return apiFetch<User>('/users/me');
+}
+
+export function getMyProfile(): Promise<Profile> {
+  return apiFetch<Profile>('/users/me/profile');
+}
+
+export function updateMyProfile(payload: ProfileUpdate): Promise<Profile> {
+  return apiFetch<Profile>('/users/me/profile', {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
 }

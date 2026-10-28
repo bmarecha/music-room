@@ -190,3 +190,59 @@ async def test_link_google_account(client: AsyncClient):
     assert me_res.status_code == 200
     assert me_res.json()["google_id"] == "google_sub_grace"
 
+
+@pytest.mark.asyncio
+async def test_profile_update_and_privacy_boundaries(client: AsyncClient):
+    owner = await client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "profile@example.com",
+            "password": "Password123!",
+            "public_name": "Profile Owner",
+        },
+    )
+    owner_token = owner.json()["access_token"]
+
+    update = await client.patch(
+        "/api/v1/users/me/profile",
+        headers={"Authorization": f"Bearer {owner_token}"},
+        json={
+            "bio": "A private bio",
+            "birthdate": "1990-01-02",
+            "bio_visibility": "private",
+            "birthdate_visibility": "friends",
+            "music_preferences_visibility": "public",
+            "music_preferences": [
+                {"preference_type": "genre", "preference_value": "jazz"},
+                {"preference_type": "artist", "preference_value": "Miles Davis"},
+            ],
+        },
+    )
+    assert update.status_code == 200
+    assert len(update.json()["music_preferences"]) == 2
+
+    own_profile = await client.get(
+        "/api/v1/users/me/profile",
+        headers={"Authorization": f"Bearer {owner_token}"},
+    )
+    assert own_profile.status_code == 200
+    assert own_profile.json()["bio"] == "A private bio"
+    owner_id = own_profile.json()["id"]
+
+    viewer = await client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "viewer@example.com",
+            "password": "Password123!",
+            "public_name": "Viewer",
+        },
+    )
+    viewer_token = viewer.json()["access_token"]
+    visible_profile = await client.get(
+        f"/api/v1/users/{owner_id}/profile",
+        headers={"Authorization": f"Bearer {viewer_token}"},
+    )
+    assert visible_profile.status_code == 200
+    assert visible_profile.json()["bio"] is None
+    assert visible_profile.json()["birthdate"] is None
+    assert len(visible_profile.json()["music_preferences"]) == 2
