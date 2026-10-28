@@ -1,6 +1,6 @@
 COMPOSE ?= docker compose
 
-.PHONY: help env build up down restart logs ps test migrate migration psql clean
+.PHONY: help env env-refresh build up down restart re logs ps test migrate migration psql clean
 
 help:
 	@echo "make env        - create .env from .env.example"
@@ -19,16 +19,11 @@ help:
 
 env:
 	@if [ ! -f .env ]; then \
-		DETECTED_IP=$$(hostname -I 2>/dev/null | awk '{print $$1}'); \
-		if [ -z "$$DETECTED_IP" ]; then \
-			DETECTED_IP=$$(ip route get 1.1.1.1 2>/dev/null | awk '{print $$7}'); \
-		fi; \
-		if [ -z "$$DETECTED_IP" ]; then \
-			DETECTED_IP=127.0.0.1; \
-		fi; \
-		sed "s/192\.168\.1\.10/$$DETECTED_IP/g" .env.example > .env; \
-		echo ".env created with HOST_IP=$$DETECTED_IP"; \
+		./refresh_env.sh; \
 	fi
+
+env-refresh:
+	./refresh_env.sh
 
 build: env
 	$(COMPOSE) build
@@ -41,8 +36,12 @@ down:
 
 restart: down up
 
+re: clean
+	$(COMPOSE) build --no-cache
+	$(COMPOSE) up -d --force-recreate
+
 logs:
-	@if [ -n "$(SERVICE)" ]; then \
+	if [ -n "$(SERVICE)" ]; then \
 		case "$(SERVICE)" in \
 			db|backend|frontend) $(COMPOSE) logs -f "$(SERVICE)" ;; \
 			*) echo "Invalid SERVICE: $(SERVICE). Use db, backend, or frontend."; exit 1 ;; \

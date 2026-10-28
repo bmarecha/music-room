@@ -1,7 +1,7 @@
 import enum
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, Date, DateTime, Enum, String, Text, func
+from sqlalchemy import Boolean, Date, DateTime, Enum, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -16,6 +16,11 @@ class VisibilityLevel(str, enum.Enum):
 class SubscriptionType(str, enum.Enum):
     FREE = "free"
     PAID = "paid"
+
+
+class PreferenceType(str, enum.Enum):
+    GENRE = "genre"
+    ARTIST = "artist"
 
 
 class User(Base):
@@ -77,4 +82,36 @@ class User(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class Friendship(Base):
+    __tablename__ = "friendships"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    friend_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
+
+
+class UserMusicPreference(Base):
+    __tablename__ = "user_music_preferences"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    preference_type: Mapped[PreferenceType] = mapped_column(
+        Enum(
+            PreferenceType,
+            name="preference_type",
+            native_enum=True,
+            values_callable=lambda x: [e.value for e in x],
+        ),
+        primary_key=True,
+    )
+    preference_value: Mapped[str] = mapped_column(
+        String(100), primary_key=True
     )
