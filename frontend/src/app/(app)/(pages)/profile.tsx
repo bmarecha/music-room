@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { profileApi } from '../../../features/profile/profile.api';
-import type { Profile } from '../../../features/profile/profile.types';
+import { profileService, type Profile } from '../../../components/profile/profile.service';
 import { useAuth } from '../../../context/AuthContext';
 import { EditPublicName } from '../../../components/profile/EditPublicName';
 import { EditBio } from '../../../components/profile/EditBio';
 import { EditBirthdate } from '../../../components/profile/EditBirthdate';
+import { EditMusicPreferences } from '../../../components/profile/EditMusicPreferences';
 
 export default function ProfileScreen() {
   const { refreshUser } = useAuth();
@@ -14,7 +14,7 @@ export default function ProfileScreen() {
 
   const loadProfileData = async () => {
     try {
-      const data = await profileApi.fetchProfile();
+      const data = await profileService.fetch();
       setProfile(data);
     } catch {
     } finally {
@@ -47,6 +47,11 @@ export default function ProfileScreen() {
             <EditPublicName initialValue={profile.public_name} onSuccess={handleMutationSuccess} />
             <EditBio initialValue={profile.bio ?? ''} initialVisibility={profile.bio_visibility} onSuccess={handleMutationSuccess} />
             <EditBirthdate initialValue={profile.birthdate ?? ''} initialVisibility={profile.birthdate_visibility} onSuccess={handleMutationSuccess} />
+            <EditMusicPreferences 
+              initialPreferences={profile.music_preferences} 
+              initialVisibility={profile.music_preferences_visibility} 
+              onSuccess={handleMutationSuccess} 
+            />
           </>
         )}
       </ScrollView>

@@ -125,7 +125,7 @@ async def update_my_profile(
             detail="Public name cannot be empty",
         )
     if "bio" in updates and updates["bio"] is not None:
-        updates["bio"] = updates["bio"].strip()
+        updates["bio"] = updates["bio"].strip() or None
     for field, value in updates.items():
         setattr(current_user, field, value)
 

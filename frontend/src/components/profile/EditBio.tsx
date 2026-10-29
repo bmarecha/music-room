@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { profileApi } from '../../features/profile/profile.api';
+import { profileService } from './profile.service';
 import { VisibilityPicker } from './VisibilityPicker';
 import type { VisibilityLevel } from '../../features/profile/profile.types';
 
@@ -18,7 +18,7 @@ export function EditBio({ initialValue, initialVisibility, onSuccess }: EditBioP
   const handleSave = async () => {
     setSaving(true);
     try {
-      await profileApi.updateProfile({
+      await profileService.update({
         bio: bio.trim() || null,
         bio_visibility: visibility,
       });
@@ -40,6 +40,7 @@ export function EditBio({ initialValue, initialVisibility, onSuccess }: EditBioP
         onChangeText={setBio}
         multiline
         placeholder="Racontez votre histoire..."
+        placeholderTextColor="#aaa"
       />
       <VisibilityPicker label="Visibilité de la bio" value={visibility} onChange={setVisibility} />
       <Pressable

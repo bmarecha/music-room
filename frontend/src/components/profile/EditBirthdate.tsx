@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { profileApi } from '../../features/profile/profile.api';
+import { profileService } from './profile.service';
 import { VisibilityPicker } from './VisibilityPicker';
 import type { VisibilityLevel } from '../../features/profile/profile.types';
 
@@ -23,7 +23,7 @@ export function EditBirthdate({ initialValue, initialVisibility, onSuccess }: Ed
     setSaving(true);
     const formattedDate = date.toISOString().split('T')[0];
     try {
-      await profileApi.updateProfile({
+      await profileService.update({
         birthdate: formattedDate,
         birthdate_visibility: visibility,
       });
@@ -128,5 +128,6 @@ const webStyles = {
     outline: 'none',
     width: '100%',
     boxSizing: 'border-box' as const,
+    placeholderColor: '#999',
   }
 };

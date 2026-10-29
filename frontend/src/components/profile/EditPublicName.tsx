@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { profileApi } from '../../features/profile/profile.api';
+import { profileService } from './profile.service';
 
 interface EditPublicNameProps {
   initialValue: string;
@@ -15,7 +15,7 @@ export function EditPublicName({ initialValue, onSuccess }: EditPublicNameProps)
     if (!value.trim() || value.trim() === initialValue) return;
     setSaving(true);
     try {
-      await profileApi.updateProfile({ public_name: value.trim() });
+      await profileService.update({ public_name: value.trim() });
       onSuccess();
     } catch {
       // Gérer l'erreur au besoin
@@ -30,7 +30,7 @@ export function EditPublicName({ initialValue, onSuccess }: EditPublicNameProps)
     <View style={styles.card}>
       <Text style={styles.title}>Nom public</Text>
       <View style={styles.row}>
-        <TextInput style={styles.input} value={value} onChangeText={setValue} autoCorrect={false} />
+        <TextInput style={styles.input} value={value} onChangeText={setValue} autoCorrect={false} placeholder="Votre nom public" placeholderTextColor="#aaa" />
         <Pressable
           style={[styles.btn, !hasChanges && styles.btnDisabled]}
           onPress={handleSave}
