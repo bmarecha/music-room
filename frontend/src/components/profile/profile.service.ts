@@ -1,23 +1,33 @@
-import { getMyProfile, updateMyProfile } from '@/api/auth';
+import {
+  acceptFriendInvite,
+  deleteFriend,
+  deleteFriendInvite,
+  getMyFriends,
+  getMyInvites,
+  getMyProfile,
+  getUserFriends,
+  getUserProfile,
+  sendFriendInvite,
+  updateMyProfile,
+  type Friend,
+  type FriendInvite,
+  type MusicPreference,
+  type Profile,
+  type ProfileUpdate,
+  type VisibilityLevel,
+} from '@/api/auth';
 
-export type VisibilityLevel = 'public' | 'friends' | 'private';
-
-export interface MusicPreference {
-  preference_type: 'genre' | 'artist';
-  preference_value: string;
-}
-
-export interface Profile {
-  public_name: string;
-  bio: string | null;
-  birthdate: string | null;
-  bio_visibility: VisibilityLevel;
-  birthdate_visibility: VisibilityLevel;
-  music_preferences: MusicPreference[];
-  music_preferences_visibility: VisibilityLevel;
-}
+export type { Friend, FriendInvite, MusicPreference, Profile, ProfileUpdate, VisibilityLevel };
 
 export const profileService = {
   fetch: () => getMyProfile(),
-  update: (data: Partial<Profile>) => updateMyProfile(data),
+  fetchUser: (userId: number) => getUserProfile(userId),
+  update: (data: ProfileUpdate) => updateMyProfile(data),
+  getMyFriends: () => getMyFriends(),
+  getUserFriends: (userId: number) => getUserFriends(userId),
+  deleteFriend: (friendId: number) => deleteFriend(friendId),
+  getInvites: () => getMyInvites(),
+  sendInvite: (publicName: string) => sendFriendInvite(publicName),
+  acceptInvite: (otherUserId: number) => acceptFriendInvite(otherUserId),
+  deleteInvite: (otherUserId: number) => deleteFriendInvite(otherUserId),
 };

@@ -503,10 +503,6 @@ const styles = StyleSheet.create({ ... });
 ### Known TODOs / Pending Work
 
 - **Real email dispatch** — replace `MOCK EMAIL DISPATCH` logs with an actual email service.
-- **Friends system (frontend)** — `Friendship` model exists in the DB; frontend UI not yet built.
-  - Friend list section (scrollable, max 5 displayed, click to view profile).
-  - Friend invite section (send invite by `public_name`, accept/reject incoming invites).
-  - `friends_visibility` field to be added to the DB.
-  - Friend profiles must be read-only (no edit capability when viewing another user).
-- **Rate limiting** — `slowapi` on critical auth endpoints (Phase 4).
 - **Events & Playlists** — Phase 3 route stubs exist in `routes/events.py` and `routes/playlists.py`; full implementation pending.
+- **Unify Styles** - Remove styles from individual frontend files
+- **Clean Frontend/src/api** - currently too much is in auth.ts, it should be split between multiple files

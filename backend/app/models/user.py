@@ -23,6 +23,11 @@ class PreferenceType(str, enum.Enum):
     ARTIST = "artist"
 
 
+class FriendshipStatus(str, enum.Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -68,6 +73,16 @@ class User(Base):
         default=VisibilityLevel.PUBLIC,
         server_default="public",
     )
+    friends_visibility: Mapped[VisibilityLevel] = mapped_column(
+        Enum(
+            VisibilityLevel,
+            name="visibility_level",
+            native_enum=True,
+            values_callable=lambda x: [e.value for e in x],
+        ),
+        default=VisibilityLevel.FRIENDS,
+        server_default="friends",
+    )
 
     subscription_type: Mapped[SubscriptionType] = mapped_column(
         Enum(
@@ -94,7 +109,17 @@ class Friendship(Base):
     friend_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
-    status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
+    status: Mapped[FriendshipStatus] = mapped_column(
+        Enum(
+            FriendshipStatus,
+            name="friendship_status",
+            native_enum=True,
+            values_callable=lambda x: [e.value for e in x],
+        ),
+        nullable=False,
+        default=FriendshipStatus.PENDING,
+        server_default="pending",
+    )
 
 
 class UserMusicPreference(Base):
