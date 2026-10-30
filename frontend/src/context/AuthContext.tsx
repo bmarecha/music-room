@@ -11,9 +11,9 @@ import {
   getMe,
   type TokenResponse,
   type User,
-} from '../api/auth';
-import { setApiAccessToken, setOnUnauthorized } from '../api/client';
-import { deleteToken, getToken, saveToken } from '../utils/storage';
+} from '@/api/auth';
+import { setApiAccessToken, setOnUnauthorized } from '@/api/client';
+import { deleteToken, getToken, saveToken } from '@/utils/storage';
 
 type AuthContextType = {
   user: User | null;

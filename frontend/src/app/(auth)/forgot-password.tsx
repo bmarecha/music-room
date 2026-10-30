@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 
-import { forgotPassword } from '../../api/auth';
+import { forgotPassword } from '@/api/auth';
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');

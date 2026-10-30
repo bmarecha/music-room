@@ -9,6 +9,7 @@ export type User = {
   bio_visibility: 'public' | 'friends' | 'private';
   birthdate_visibility: 'public' | 'friends' | 'private';
   music_preferences_visibility: 'public' | 'friends' | 'private';
+  friends_visibility: 'public' | 'friends' | 'private';
   subscription_type: 'free' | 'paid';
   google_id: string | null;
   is_email_validated: boolean;
@@ -31,6 +32,7 @@ export type Profile = {
   bio_visibility: VisibilityLevel;
   birthdate_visibility: VisibilityLevel;
   music_preferences_visibility: VisibilityLevel;
+  friends_visibility: VisibilityLevel;
   music_preferences: MusicPreference[];
 };
 
@@ -41,7 +43,21 @@ export type ProfileUpdate = {
   bio_visibility?: VisibilityLevel;
   birthdate_visibility?: VisibilityLevel;
   music_preferences_visibility?: VisibilityLevel;
+  friends_visibility?: VisibilityLevel;
   music_preferences?: MusicPreference[];
+};
+
+export type Friend = {
+  id: number;
+  public_name: string;
+  bio: string | null;
+};
+
+export type FriendInvite = {
+  other_user_id: number;
+  other_user_name: string;
+  direction: 'sent' | 'received';
+  status: string;
 };
 
 export type TokenResponse = {
@@ -65,7 +81,7 @@ export function login(email: string, password: string): Promise<TokenResponse> {
 export function register(
   email: string,
   password: string,
-  public_name: string
+  public_name: string,
 ): Promise<TokenResponse> {
   return apiFetch<TokenResponse>('/auth/register', {
     method: 'POST',
@@ -94,10 +110,7 @@ export function forgotPassword(email: string): Promise<MessageResponse> {
   });
 }
 
-export function resetPassword(
-  token: string,
-  new_password: string
-): Promise<MessageResponse> {
+export function resetPassword(token: string, new_password: string): Promise<MessageResponse> {
   return apiFetch<MessageResponse>('/auth/reset-password', {
     method: 'POST',
     body: JSON.stringify({ token, new_password }),
@@ -130,5 +143,46 @@ export function updateMyProfile(payload: ProfileUpdate): Promise<Profile> {
   return apiFetch<Profile>('/users/me/profile', {
     method: 'PATCH',
     body: JSON.stringify(payload),
+  });
+}
+
+export function getUserProfile(userId: number): Promise<Profile> {
+  return apiFetch<Profile>(`/users/${userId}/profile`);
+}
+
+export function getMyFriends(): Promise<Friend[]> {
+  return apiFetch<Friend[]>('/users/me/friends');
+}
+
+export function getUserFriends(userId: number): Promise<Friend[]> {
+  return apiFetch<Friend[]>(`/users/${userId}/friends`);
+}
+
+export function deleteFriend(friendId: number): Promise<void> {
+  return apiFetch<void>(`/users/me/friends/${friendId}`, {
+    method: 'DELETE',
+  });
+}
+
+export function getMyInvites(): Promise<FriendInvite[]> {
+  return apiFetch<FriendInvite[]>('/users/me/invites');
+}
+
+export function sendFriendInvite(publicName: string): Promise<FriendInvite> {
+  return apiFetch<FriendInvite>('/users/me/invites', {
+    method: 'POST',
+    body: JSON.stringify({ public_name: publicName }),
+  });
+}
+
+export function acceptFriendInvite(otherUserId: number): Promise<Friend> {
+  return apiFetch<Friend>(`/users/me/invites/${otherUserId}/accept`, {
+    method: 'POST',
+  });
+}
+
+export function deleteFriendInvite(otherUserId: number): Promise<void> {
+  return apiFetch<void>(`/users/me/invites/${otherUserId}`, {
+    method: 'DELETE',
   });
 }

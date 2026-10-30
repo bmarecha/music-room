@@ -11,9 +11,9 @@ import {
   View,
 } from 'react-native';
 
-import { useAuth } from '../../context/AuthContext';
-import { googleOAuth, login } from '../../api/auth';
-import { promptGoogleSignIn } from '../../utils/oauth';
+import { useAuth } from '@/context/AuthContext';
+import { googleOAuth, login } from '@/api/auth';
+import { promptGoogleSignIn } from '@/utils/oauth';
 
 export default function LoginScreen() {
   const { establishSession } = useAuth();

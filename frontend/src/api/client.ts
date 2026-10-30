@@ -60,5 +60,14 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
     throw new Error(errorMessage);
   }
 
-  return response.json() as Promise<T>;
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as unknown as T;
+  }
+
+  const text = await response.text();
+  if (!text.trim()) {
+    return undefined as unknown as T;
+  }
+
+  return JSON.parse(text) as T;
 }

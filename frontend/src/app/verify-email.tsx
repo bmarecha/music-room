@@ -11,8 +11,8 @@ import {
   View,
 } from 'react-native';
 
-import { resendVerification, verifyEmail } from '../api/auth';
-import { useAuth } from '../context/AuthContext';
+import { resendVerification, verifyEmail } from '@/api/auth';
+import { useAuth } from '@/context/AuthContext';
 
 export default function VerifyEmailScreen() {
   const { user, refreshUser, logout, isLoading, isAuthenticated, isEmailPending } =

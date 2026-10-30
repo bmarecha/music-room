@@ -14,9 +14,10 @@ const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID ?? '';
 export async function promptGoogleSignIn(): Promise<string | null> {
   if (!GOOGLE_CLIENT_ID) {
     // Development / mock fallback
-    const mockEmail = `user_${Date.now().toString().slice(-4)}@gmail.com`;
+    const mockSuffix = Date.now().toString().slice(-4);
+    const mockEmail = `user_${mockSuffix}@gmail.com`;
     const mockId = `google_${Date.now()}`;
-    const mockName = 'Google User';
+    const mockName = `Google User ${mockSuffix}`;
 
     if (Platform.OS !== 'web') {
       Alert.alert(

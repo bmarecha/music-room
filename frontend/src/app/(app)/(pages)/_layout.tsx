@@ -3,12 +3,20 @@ import { Stack, router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function PagesLayout() {
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/');
+    }
+  };
+
   return (
     <Stack
       screenOptions={{
         header: ({ options }) => (
           <View style={styles.headerBar}>
-            <Pressable style={styles.backButton} onPress={() => router.back()}>
+            <Pressable style={styles.backButton} onPress={handleBack}>
               <Text style={styles.backText}>← Retour</Text>
             </Pressable>
             <Text style={styles.headerTitle}>{options.title}</Text>
