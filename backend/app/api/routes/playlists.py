@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user_id
+from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.playlist import (
     Playlist,
@@ -94,7 +94,7 @@ async def get_owned_playlist(db: AsyncSession, playlist_id: int, user_id: int) -
 @router.post("", response_model=PlaylistRead, status_code=status.HTTP_201_CREATED)
 async def create_playlist(
     data: PlaylistCreate,
-    user_id: int = Depends(get_current_user_id),
+    user_id: int = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Playlist:
     playlist = Playlist(creator_id=user_id, **data.model_dump())
@@ -106,7 +106,7 @@ async def create_playlist(
 
 @router.get("", response_model=list[PlaylistRead])
 async def list_playlists(
-    user_id: int = Depends(get_current_user_id),
+    user_id: int = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[Playlist]:
     collaborating = select(PlaylistCollaborator.playlist_id).where(
@@ -129,20 +129,20 @@ async def list_playlists(
 @router.get("/{playlist_id}", response_model=PlaylistRead)
 async def read_playlist(
     playlist_id: int,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Playlist:
-    return await get_viewable_playlist(db, playlist_id, user_id)
+    return await get_viewable_playlist(db, playlist_id, user.id)
 
 
 @router.patch("/{playlist_id}", response_model=PlaylistRead)
 async def update_playlist(
     playlist_id: int,
     data: PlaylistUpdate,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Playlist:
-    playlist = await get_owned_playlist(db, playlist_id, user_id)
+    playlist = await get_owned_playlist(db, playlist_id, user.id)
     for field, value in data.model_dump(exclude_none=True).items():
         setattr(playlist, field, value)
     await db.commit()
@@ -153,10 +153,10 @@ async def update_playlist(
 @router.delete("/{playlist_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_playlist(
     playlist_id: int,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> None:
-    playlist = await get_owned_playlist(db, playlist_id, user_id)
+    playlist = await get_owned_playlist(db, playlist_id, user.id)
     await db.delete(playlist)
     await db.commit()
 
@@ -167,10 +167,10 @@ async def delete_playlist(
 @router.get("/{playlist_id}/tracks", response_model=list[PlaylistTrackRead])
 async def list_playlist_tracks(
     playlist_id: int,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[PlaylistTrack]:
-    await get_viewable_playlist(db, playlist_id, user_id)
+    await get_viewable_playlist(db, playlist_id, user.id)
     result = await db.execute(
         select(PlaylistTrack)
         .where(PlaylistTrack.playlist_id == playlist_id)
@@ -187,11 +187,11 @@ async def list_playlist_tracks(
 async def add_playlist_track(
     playlist_id: int,
     data: PlaylistTrackCreate,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> PlaylistTrack:
     # The row lock held until the commit keeps positions consistent under concurrency.
-    await get_editable_playlist(db, playlist_id, user_id, for_update=True)
+    await get_editable_playlist(db, playlist_id, user.id, for_update=True)
 
     if data.track is not None:
         if data.track.id != data.track_id:
@@ -219,7 +219,7 @@ async def add_playlist_track(
         .values(position=PlaylistTrack.position + 1)
     )
     playlist_track = PlaylistTrack(
-        playlist_id=playlist_id, track_id=data.track_id, position=position, added_by=user_id
+        playlist_id=playlist_id, track_id=data.track_id, position=position, added_by=user.id
     )
     db.add(playlist_track)
     await db.commit()
@@ -231,10 +231,10 @@ async def add_playlist_track(
 async def remove_playlist_track(
     playlist_id: int,
     track_id: str,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> None:
-    await get_editable_playlist(db, playlist_id, user_id, for_update=True)
+    await get_editable_playlist(db, playlist_id, user.id, for_update=True)
 
     playlist_track = await db.get(PlaylistTrack, (playlist_id, track_id))
     if playlist_track is None:
@@ -257,10 +257,10 @@ async def remove_playlist_track(
 @router.get("/{playlist_id}/collaborators", response_model=list[PlaylistCollaboratorRead])
 async def list_collaborators(
     playlist_id: int,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[PlaylistCollaborator]:
-    await get_viewable_playlist(db, playlist_id, user_id)
+    await get_viewable_playlist(db, playlist_id, user.id)
     result = await db.execute(
         select(PlaylistCollaborator)
         .where(PlaylistCollaborator.playlist_id == playlist_id)
@@ -277,10 +277,10 @@ async def list_collaborators(
 async def add_collaborator(
     playlist_id: int,
     data: PlaylistCollaboratorCreate,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> PlaylistCollaborator:
-    await get_owned_playlist(db, playlist_id, user_id)
+    await get_owned_playlist(db, playlist_id, user.id)
     if await db.scalar(select(User.id).where(User.id == data.user_id)) is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
 
@@ -305,10 +305,10 @@ async def add_collaborator(
 async def remove_collaborator(
     playlist_id: int,
     collaborator_id: int,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> None:
-    await get_owned_playlist(db, playlist_id, user_id)
+    await get_owned_playlist(db, playlist_id, user.id)
     collaborator = await db.get(PlaylistCollaborator, (playlist_id, collaborator_id))
     if collaborator is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Collaborator not found")

@@ -3,8 +3,8 @@ from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user_id
-from app.db.session import get_db
+from app.api.deps import get_current_user, get_db
+from app.models.user import User
 from app.models.event import Event, EventVote
 from app.models.track import Track
 from app.schemas.event import (
@@ -30,10 +30,10 @@ async def get_event_or_404(db: AsyncSession, event_id: int) -> Event:
 @router.post("", response_model=EventRead, status_code=status.HTTP_201_CREATED)
 async def create_event(
     data: EventCreate,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Event:
-    event = Event(host_id=user_id, **data.model_dump())
+    event = Event(host_id=user.id, **data.model_dump())
     db.add(event)
     await db.commit()
     await db.refresh(event)
@@ -59,7 +59,7 @@ async def read_event(event_id: int, db: AsyncSession = Depends(get_db)) -> Event
 async def vote(
     event_id: int,
     data: EventVoteCreate,
-    user_id: int = Depends(get_current_user_id),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> EventVote:
     await get_event_or_404(db, event_id)
@@ -82,7 +82,7 @@ async def vote(
         .values(
             event_id=event_id,
             track_id=data.track_id,
-            user_id=user_id,
+            user_id=user.id,
             vote_value=data.vote_value,
         )
         .on_conflict_do_update(
