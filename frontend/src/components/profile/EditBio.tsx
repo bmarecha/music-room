@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { profileService } from './profile.service';
 import { VisibilityPicker } from './VisibilityPicker';
-import type { VisibilityLevel } from '../../features/profile/profile.types';
+import type { VisibilityLevel } from './profile.service';
 
 interface EditBioProps {
   initialValue: string;

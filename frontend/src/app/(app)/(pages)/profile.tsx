@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { profileService, type Profile } from '../../../components/profile/profile.service';
-import { useAuth } from '../../../context/AuthContext';
-import { EditPublicName } from '../../../components/profile/EditPublicName';
-import { EditBio } from '../../../components/profile/EditBio';
-import { EditBirthdate } from '../../../components/profile/EditBirthdate';
-import { EditMusicPreferences } from '../../../components/profile/EditMusicPreferences';
+import { profileService, type Profile } from '@/components/profile/profile.service';
+import { useAuth } from '@/context/AuthContext';
+import { EditPublicName } from '@/components/profile/EditPublicName';
+import { EditBio } from '@/components/profile/EditBio';
+import { EditBirthdate } from '@/components/profile/EditBirthdate';
+import { EditMusicPreferences } from '@/components/profile/EditMusicPreferences';
 
 export default function ProfileScreen() {
   const { refreshUser } = useAuth();

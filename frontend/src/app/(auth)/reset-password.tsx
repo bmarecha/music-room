@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 
-import { resetPassword } from '../../api/auth';
+import { resetPassword } from '@/api/auth';
 
 export default function ResetPasswordScreen() {
   const [token, setToken] = useState('');

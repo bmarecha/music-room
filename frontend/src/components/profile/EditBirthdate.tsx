@@ -3,7 +3,7 @@ import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from '
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { profileService } from './profile.service';
 import { VisibilityPicker } from './VisibilityPicker';
-import type { VisibilityLevel } from '../../features/profile/profile.types';
+import type { VisibilityLevel } from './profile.service';
 
 interface EditBirthdateProps {
   initialValue: string | null | undefined;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import type { VisibilityLevel } from '../../features/profile/profile.types';
+import type { VisibilityLevel } from './profile.service';
 
 interface VisibilityPickerProps {
   label: string;

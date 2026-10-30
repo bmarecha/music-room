@@ -1,6 +1,6 @@
 COMPOSE ?= docker compose
 
-.PHONY: help env env-refresh build up down restart re logs ps test migrate migration psql clean
+.PHONY: help env env-refresh build up down restart re logs ps test migrate migration psql clean lint format
 
 help:
 	@echo "make env        - create .env from .env.example"
@@ -15,6 +15,8 @@ help:
 	@echo "make migrate    - apply database migrations"
 	@echo "make migration m=\"message\" - generate a new migration"
 	@echo "make psql       - open a psql shell"
+	@echo "make lint       - lint backend (ruff) and frontend (eslint)"
+	@echo "make format     - format backend (ruff) and frontend (prettier)"
 	@echo "make clean      - stop and remove volumes"
 
 env:
@@ -53,7 +55,7 @@ logs:
 ps:
 	$(COMPOSE) ps
 
-test:
+test: lint
 	$(COMPOSE) run --rm backend pytest
 
 migrate:
@@ -64,6 +66,14 @@ migration:
 
 psql:
 	$(COMPOSE) exec db sh -c 'psql -U $$POSTGRES_USER -d $$POSTGRES_DB'
+
+lint:
+	$(COMPOSE) run --rm backend ruff check app tests
+	$(COMPOSE) run --rm frontend npm run lint
+
+format:
+	$(COMPOSE) run --rm backend ruff format app tests
+	$(COMPOSE) run --rm frontend npm run format
 
 clean:
 	$(COMPOSE) down -v

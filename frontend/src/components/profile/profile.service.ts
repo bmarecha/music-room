@@ -1,4 +1,4 @@
-import { getMyProfile, updateMyProfile } from '../../api/auth';
+import { getMyProfile, updateMyProfile } from '@/api/auth';
 
 export type VisibilityLevel = 'public' | 'friends' | 'private';
 

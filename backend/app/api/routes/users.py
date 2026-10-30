@@ -60,7 +60,7 @@ def _profile_response(
     preferences: list[MusicPreferenceRead],
     *,
     is_self: bool,
-    is_friend: bool,
+    is_friend: bool = False,
 ) -> ProfileRead:
     can_see_friends = is_self or is_friend
     return ProfileRead(
@@ -106,7 +106,7 @@ async def read_my_profile(
 ) -> ProfileRead:
     preferences = await _profile_preferences(current_user.id, db)
     return _profile_response(
-        current_user, preferences, is_self=True, is_friend=True
+        current_user, preferences, is_self=True
     )
 
 
